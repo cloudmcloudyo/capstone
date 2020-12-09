@@ -1,5 +1,0 @@
-User-agent: *
-Disallow: /ext.php
-Disallow: /out
-Disallow: /software/download.php
-Disallow: /software/rnc.php
