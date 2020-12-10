@@ -1,8 +1,8 @@
-# ![](https://ga-dash.s3.amazonaws.com/production/assets/logo-9f88ae6c9c3871690e33280fcf557f33.png) Capstone - Seinfeld Script Generator
+# ![](https://ga-dash.s3.amazonaws.com/production/assets/logo-9f88ae6c9c3871690e33280fcf557f33.png) Seinfeld Script Generator
 ---
 ### Problem Statement
 
-This project
+This project sets out to explore building models that produce great text generation
 
 To build a script generator for popular sitcom, Seinfeld, based on the scripts of the 178 aired episodes. Each script generated should have at least 50 meaningful dialogue exchanges.
 
@@ -68,7 +68,9 @@ streamlit
 - RNN under py 3.7
 - GPT-2 tensorflow 1.15
 
-### Findings & Conclusions
+### Findings
+
+### Conclusions
 - for text generation, data size is still the key?
 
 Dataset sizes: Note that if your data is too small (1MB is already considered very small) the RNN won't learn very effectively. Remember that it has to learn everything completely from scratch. Conversely if your data is large (more than about 2MB), feel confident to increase rnn_size and train a bigger model (see details of training below). It will work significantly better. For example with 6MB you can easily go up to rnn_size 300 or even more. The biggest that fits on my GPU and that I've trained with this code is rnn_size 700 with num_layers 3 (2 is default).
