@@ -2,23 +2,26 @@
 ---
 ### Problem Statement
 
-This project sets out to explore building models that produce great text generation
+In 1996, Bill Gates wrote an essay whose title became so prevailing that every marketer knows and quotes-- "Content is King." In his essay, he believed that content "is where I expect much of the real money will be made on the Internet." Fast forward to today, his idea still stands the test of time, if not turns even truer.
 
-To build a script generator for popular sitcom, Seinfeld, based on the scripts of the 178 aired episodes. Each script generated should have at least 50 meaningful dialogue exchanges.
+We live in a world filled with content. Tehcnology has significantly lowered the bar of creating and consuming content. With the explosion of social media, the landscape of marketing has been changed completely. 10 years ago, it was fancy for a brand to have a Facebook page; now it's a must, along with a list of other must-haves: Instagram, Twitter, Pinterest, to name just a few.
 
+To stay relevent, brands need to constantly supply content with high quality for informational or entertainment purpose, which sets a new requirment for marketers: not only do they need to generate content with great quality, they need to generate it more and fast, as well as with minimum costs possible. The good news, as Bill stated, is that "no company is too small to participate." However the question remains, how do we achieve all those? 
 
-Text generation. --> from a marketing perspective
-Why: inspiration? less significant events -- cost-cutting, more efficient?
-Writing partner
-They want to generate some jokes, marketing campaign but they are on a budget. Using seinfeld as an example.
-contents is the king but they come with a price
+That is where text generation comes in. 
 
-media-transcendence: IP operation --> "stranger things" experience. video games, online interactive, CRM-community management, etc
+Recent years has witnessed series of jaw-droppping breakthroughs in the field of natural language processing, with new pre-trained NLP models producing state-of-arts results on various tasks from sentiment analysis to question answering. From a marketing's perspective, the applicatoin of text generation is endless: community engagement, developing derivatives based on an existing IP, A/B testing and so forth. Being able to utilize the text generation models will be a compelling advantage that sets the brand apart. 
 
-### Methods & Models
-Word Embedding
-basic: RNN - LSTM model
-advanced: BART/GPT-2 model
+This project aims to use text generation models to build a script generator for the popular 90s sitcom _Seinfeld_, with the hope to showcase marketing and operation professionals how far text generation can go and be applied with a vivid example. TV writers get paid \\$26,832 per 30-minute prime time episode. For a phenomenal show like _Seinfeld_, the price tag to hire a writer is much higher. In fact, one of the show's main writers is the leading actor Jerry Seinfeld himself, who made a staggering $13,000 per line arriving the final season of the show. Imagine that NBC would like to initiate a marketing campaign featuring reimagined _Seinfeld_ scenes, the script generator will help to afford the idea and likely achieve it faster.
+
+Specific questions this project would like to answer:
+1. Can a RNN-LSTM model be used to generate scripts with meaningful sentences in the same formality as the input data?
+2. Does word level RNN-LSTM models outperfrom character level ones and why?
+3. Is it possible to fine tune pre-trained GPT-2 model to generate _Seinfeld_-specific scripts? 
+4. Can diversity be specified to meet different creative demands?
+4. Which of the GPT-2 and RNN-LSTM perform better with regard to the form, content and speed of the script generation?
+5. What are the thredholds of data size for each model?
+6. Can these models be trained with a budget-friendly method?
 
 
 ### Risks & Assumptions
@@ -101,3 +104,12 @@ Transfer Learning --> if it's there, use it!
 ### Executive Summary
 
 ### Reference
+
+https://medium.com/@HeathEvans/content-is-king-essay-by-bill-gates-1996-df74552f80d9#:~:text=Ever%20wondered%20where%20the%20phrase,as%20it%20was%20in%20broadcasting.
+
+https://towardsdatascience.com/openai-gpt-2-understanding-language-generation-through-visualization-8252f683b2f8
+
+https://towardsdatascience.com/examining-the-transformer-architecture-part-1-the-openai-gpt-2-controversy-feceda4363bb
+
+paper
+https://s3-us-west-2.amazonaws.com/openai-assets/research-covers/language-unsupervised/language_understanding_paper.pdf
