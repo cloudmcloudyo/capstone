@@ -40,11 +40,46 @@ Specific questions this project would like to answer:
 
 <a id='data_aquisition_and_cleaning'></a>
 ### Data Aquisition and Cleaning
-https://www.imsdb.com/TV/Seinfeld.html
-Data Retrieving: build an automated scraper to perform web scrapping from the data source.
+
+The data used for this project is the scripts of all season episodes of _Seinfeld_. The only data source I found that allows web scraping is Internet Movie Script Database ([IMSDb](https://www.imsdb.com/)), which is a renowned resource for movie and TV scripts. 
+
+As the source does not have an API for scraping, I built a function to automate the web scraping process. The function is composed of three parts: 
+1. locates the dedicated page for _Seinfeld_ with the list of all episodes; 
+2. locates the dedicated pages for each episode; 
+3. scrapes scripts on each episode page.
+
+It was not expected the data was in fact not in good shape after being scraped, considering that it was a finished product and should have a standard format that is ready to go. However, upon discovery, massive formatting errors and redundant information were staggered throughout the data. 
+
+The best efforts have been made to tidy up the data which includes: 
+1. removed datapoints that have less than occurance because these data are not likely to provide any valuable inference for the model
+2. corrected typos, redundant character names
+3. corrected misplaced lines due to the wrong formatting of the data source
+4. dropped rows where dedicated to two speakers
+5. dropped duplicate scripts
+
+The cleaned data before feature engineering has a shape of (44,661, 3) as compared to the original shape of (54211, 3). Most of the reduction came from duplicated lines therefore I don't believe doing this will hurt the quality of the data. 
 
 <a id='exploratory_data_analysis'></a>
 ### Exploratory Data Analysis
+
+I engineered a couple of features for EDA purposes including ```word_count```, ```sentiment_score```, ```sentiment```("positive", "negative" or "neutral"), and ```line_no_par```(lines excluding the script description inside parentheses).
+
+Overall the average word count per line is 13 words. The distribution of the word count per line is highly skewed to the right. The max number is 399, which was expected, as the show always start with Jerry Seinfeld doing a comedy stand up which has long lines.
+
+<table><tr>
+<td> <img src="./charts/dist_word_counts.png" alt="Drawing" style="width: 375px;"/> </td>
+</tr></table>
+
+Below are the charts of top 15 characters with most lines and most line words. Not surprisingly, the four leading characters have significantly the most lines and words in the script. Jerry Seinfeld is the single character with most lines and words and led the charts by significant numbers, followed by George, Elaine and Kramer. I can also rougly concluded that the number of lines a character has is strongly correlated to the number of words spoken.
+
+<table><tr>
+<td> <img src="./charts/top15_most_lines.png" alt="Drawing" style="width: 500px;"/> </td>
+</tr></table>
+<table><tr>
+<td> <img src="./charts/top15_most_words.png" alt="Drawing" style="width: 500px;"/> </td>
+</tr></table>
+
+It was interesting 
 
 <a id='text_preprocessing'></a>
 ### Text Preprocessing
