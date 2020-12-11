@@ -57,7 +57,7 @@ The best efforts have been made to tidy up the data which includes:
 4. dropped rows where dedicated to two speakers
 5. dropped duplicate scripts
 
-The cleaned data before feature engineering has a shape of (44,661, 3) as compared to the original shape of (54211, 3). Most of the reduction came from duplicated lines therefore I don't believe doing this will hurt the quality of the data. 
+The cleaned data before feature engineering has a shape of (44,661, 3) as compared to the original shape of (54,211, 3). Most of the reduction came from duplicated lines therefore I don't believe doing this will hurt the quality of the data. 
 
 <a id='exploratory_data_analysis'></a>
 ### Exploratory Data Analysis
@@ -79,10 +79,43 @@ Below are the charts of top 15 characters with most lines and most line words. N
 <td> <img src="./charts/top15_most_words.png" alt="Drawing" style="width: 500px;"/> </td>
 </tr></table>
 
-It was interesting 
+The result of sentiment analysis surprised me. Despite the display of huge differences in characters on the screen, the lines of the 4 characters showed almost identical mean and distribution of positive, neutral and negative sentiments. As indicated by the visualizations, all four of them have mostly neutral sentiment, followed by positive and then negative.
+
+<table><tr>
+<td> <img src="./charts/top4_sentiment_percentage.png" alt="Drawing" style="width: 500px;"/> </td>
+</tr></table>
+<table><tr>
+<td> <img src="./charts/top4_sentiment_describe.png" alt="Drawing" style="width: 450px;"/> </td>
+</tr></table>
+
+I also explored the most used words and n-grams by characters using default and custom stop words, from which I discoverd some patterns of the characters' line however didn't find much of distinctions among the characters. The characters tend to use a lot of interjection phrases such as "ha ha", "yeah", "oh", etc as well as negated expression such as "don know", "don want", "don think".
+
+I created word clouds for each character for better visualizations. As shown below, the four characters have practically excatly the same most frequents words: "dont" "know" "like" "right".
+
+<table><tr>
+<td> <img src="./charts/jerry_wordcloud.png" alt="Drawing" style="width: 375px;"/> </td>
+<td> <img src="./charts/george_wordcloud.png" alt="Drawing" style="width: 375px;"/> </td>
+</tr></table>
+
+<table><tr>
+<td> <img src="./charts/elaine_wordcloud.png" alt="Drawing" style="width: 375px;"/> </td>
+<td> <img src="./charts/kramer_wordcloud.png" alt="Drawing" style="width: 375px;"/> </td>
+</tr></table>
+
+Also it was during this process that I realized there are still some formatting erros in the data that was not possible to efficiently clean out within the time limit. Considering the amount is not too huge, I decided to work with what I had.
+
+Upon conducting EDA, I came up with some conslusions and hypotheses:
+
+1. The original data is a lot messier than it was expected. After performed data cleaning to my best efforts, I know there are still some noises within the data that are nearly impossible to be cleaned up entirely. Therefore I should expect some errors in my generated scripts.
+2. Jerry, George, Elaine and Kramer are definite leading charaters with most lines and line words and therefore I assume that most of the model outputs will consist of dialogues among them.
+3. As the average line length is 13 words, I may not want my model to learn the scripts with a number smaller than that, otherwise not enough information will be fed into the model to effectively learn. In the similar sense, considering the nature of conversations, I may not want my model to have too many lines to look at either, as that way will create noises.
+4. Although I perceived distinctive personalities for the 4 leading characters from the show, I didn't see enough distinction from their lines. They have similar sentiment results and simlar word usages. If anything, Kramer may be the only one who shows slight difference from his three friends.
+5. I would expect to see a lot of repetition of "meaningless" high frequency words such as "yeah yeah", "oh yeah", "don know", "don think", "don want" in the generated scripts.
 
 <a id='text_preprocessing'></a>
 ### Text Preprocessing
+
+
 
 <a id='modeling_and_tuning'></a>
 ### Modeling and Tuning
@@ -110,7 +143,7 @@ Word based
 GPT-2 Architecture
 
 <table><tr>
-<td><img src='./img/gpt_2_architecture.png' alt="Drawing" style="width: 200px;"/></td>             
+<td><img src='./img/gpt_2_architecture.png' alt="Drawing" style="width: 200px;"/></td>         
 </tr></table>
 
 
@@ -137,7 +170,12 @@ Final thought: Seinfeld is kind of a tough text to generate from. As a general r
 
 <a id='script_generator_api'></a>
 ### Script Generator API
+
 streamlit
+
+<table><tr>
+<td><img src='./img/api_gpt_screenshot.png' alt="Drawing" style="width: 500px;"/></td>         
+</tr></table>
 
 <a id='text_preprocessing'></a>
 ### System Requirment
