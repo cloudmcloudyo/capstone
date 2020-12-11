@@ -44,18 +44,18 @@ Specific questions this project would like to answer:
 The data used for this project is the scripts of all season episodes of _Seinfeld_. The only data source I found that allows web scraping is Internet Movie Script Database ([IMSDb](https://www.imsdb.com/)), which is a renowned resource for movie and TV scripts. 
 
 As the source does not have an API for scraping, I built a function to automate the web scraping process. The function is composed of three parts: 
-1. locates the dedicated page for _Seinfeld_ with the list of all episodes; 
-2. locates the dedicated pages for each episode; 
-3. scrapes scripts on each episode page.
+1. Locates the dedicated page for _Seinfeld_ with the list of all episodes; 
+2. Locates the dedicated pages for each episode; 
+3. Scrapes scripts on each episode page.
 
 It was not expected the data was in fact not in good shape after being scraped, considering that it was a finished product and should have a standard format that is ready to go. However, upon discovery, massive formatting errors and redundant information were staggered throughout the data. 
 
-The best efforts have been made to tidy up the data which includes: 
-1. removed datapoints that have less than occurance because these data are not likely to provide any valuable inference for the model
-2. corrected typos, redundant character names
-3. corrected misplaced lines due to the wrong formatting of the data source
-4. dropped rows where dedicated to two speakers
-5. dropped duplicate scripts
+The best efforts have been made to tidy up the data which include: 
+1. Removed datapoints that have less than occurance because these data are not likely to provide any valuable inference for the model
+2. Corrected typos, redundant character names
+3. Corrected misplaced lines due to the wrong formatting of the data source
+4. Dropped rows where dedicated to two speakers
+5. Dropped duplicate scripts
 
 The cleaned data before feature engineering has a shape of (44,661, 3) as compared to the original shape of (54,211, 3). Most of the reduction came from duplicated lines therefore I don't believe doing this will hurt the quality of the data. 
 
