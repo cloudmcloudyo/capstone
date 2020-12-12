@@ -27,14 +27,12 @@ Specific questions this project would like to answer:
 
 * [Data Aquisition and Cleaning](#data_aquisition_and_cleaning)
 * [Exploratory Data Analysis](#exploratory_data_analysis)
-* [Text Preprocessing](#text_preprocessing)
 * [Modeling and Tuning](#modeling_and_tuning)
 * [Evaluation](#evaluation)
 * [Script Generator API](#script_generator_api)
-* [Findings and Recommendations](#findings_and_recommendations)
+* [Conclustions](#conclusions)
 * [Limitations and Next Steps](#limitations_and_next_steps)
 * [Reflections](#reflections)
-* [Technical Review](#technical_review)
 * [System Requirements](#system_requirements)
 * [References](#references)
 
@@ -112,24 +110,26 @@ Upon conducting EDA, I came up with some conslusions and hypotheses:
 4. Although I perceived distinctive personalities for the 4 leading characters from the show, I didn't see enough distinction from their lines. They have similar sentiment results and simlar word usages. If anything, Kramer may be the only one who shows slight difference from his three friends.
 5. I would expect to see a lot of repetition of "meaningless" high frequency words such as "yeah yeah", "oh yeah", "don know", "don think", "don want" in the generated scripts.
 
-<a id='text_preprocessing'></a>
-### Text Preprocessing
-
-
-
 <a id='modeling_and_tuning'></a>
 ### Modeling and Tuning
-Character based
 
-This is because char-based RNN LMs require much bigger hidden layer to successfully model long-term dependencies which means higher computational costs.
+Three types of models were ran, in the spirit to find pros and cons of each model and provide more options for the audience based on their needs. 
 
-one of the fundamental differences between the word level and character level models is in the number of parameters the RNN has to access during the training and test. The smaller is the input and output layer of RNN, the larger needs to be the fully connected hidden layer, which makes the training of the model expensive.
+The first model was a character-level RNN/LSTM model. The model was trained on Kaggle's GPU and used only the first 500,000 characters (1/7 of the total data) to ensure the running of GPU. The sequence length was set at 100, as a conservative attempt to test out the model. The architecture used three LSTM layers as well as two dense neural network layers.
 
+|**RNN Architecture**|*Neurons*|Dropout|Parameters|*Output Shape*|
+|---|---|---|---|---|
+|**Embedding Layer**|None|None|5900|*( None, 100, 100 )*|
+|**LSTM 01**|512|0.1|1,255,424|*(  None, 100, 512 )*|
+|**LSTM 02**|512|0.1|2,099,200|*( None, 100, 512 )*|
+|**LSTM 03**|512|0.1|2,099,200|*(  None, 512 )*|
+|**Dense**|256|None|131,328|*(  None, 256 )*|
+|**Dense**|128|None|32,896|*(  None, 128 )*|
+|**Dense Output**|18,725|None|7,611|*(  None, 59 )*|
 
+With a total training time of 2 hours with 30 epochs, I got a loss of 1.0687. The generated scripts from the model perform greatly with the learning the format and certain spellings; however, even with the relative complex model set up, all scripts generated contain heavy repetition from the characters most frequently used words.
 
-
-
-Word based
+With the belief that more data should be used as well as use word as a token relieve model from learning spellings, I did the second RNN/LSTM model based on words. I set the sequence length to be 40 words which correspond to approximately 3-4 lines, which is an increase from the character level model.
 
 |**RNN Architecture**|*Neurons*|Dropout|Parameters|*Output Shape*|
 |---|---|---|---|---|
@@ -138,74 +138,64 @@ Word based
 |**LSTM 02**|512|0.1|2,099,200|*( None, 512 )*|
 |**Dense Output**|18,725|None|9,605,925|*(  None, 18725 )*|
 
+A batch generator function was built to break through the hardware limitation, a diversity function was added at the script generation stage so that customization could be added. The final script generation function takes in ```seed text```, ```length```, and ```temperation```(the diversity level).
 
+The word-based RNN/LSTM ran for 6.5h in total with thirteenth epochs has the best loss of 3.13. And the generated results saw significant improvements across temperature values. The model learned to follow the general pattern of the original script, which is the speaking ```character first: ``` and the corresponding line. However as part of the preprocessing, sepcial characters were separated from the words for tokenization purposes, which made the model unable to learn about most punctuation rules. The special characters were added back to the text using a manual function. In addition, The sentences and names do not capitalize, which is certainly an area to work. 
 
-GPT-2 Architecture
+Last but not least, I utilized transfer learning to fine tune a GPT-2 model using _Seinfeld_ data. The GPT-2 is a transformer-based model which uses attention mechanisms to predict the next word. It has 12 attention layers with each has 12 individual heads. GPT-2 has been proven to achieve state-of-art results in text generation and was considered the most powerful language model. 
+
+Thanks to the wrapper created by [Max Woolf](https://github.com/minimaxir/gpt-2-simple), I was able to train the model fairly easily. The model allows various level of fine tuning, including ```prefix```, ```length```, ```temperature```, etc. The smallest GPT-2 size was used for this project for a balance of speed and effiency.
 
 <table><tr>
 <td><img src='./img/gpt_2_architecture.png' alt="Drawing" style="width: 200px;"/></td>         
 </tr></table>
 
+After training on Google Colab GPU for about 2 hours, I achieved the loss of 0.83. 
 
-loss --> under 1
-LSTM --> 2-3 layers 
-batch size -->
-Steps
-max sequence length
+The GPT-2 model has generated consistant high quality results. A few generated texts are very human-like which consists of simple logic arguments. The model certainly learned the style and content of the data with rare errors as stated. And thanks to the attention model, the generate text has exciting results in learning about context within the generated text. Also due to GPT-2's huge number parameters, external information often occurs in the generated text. GPT-2 didn't perform as well as word-level RNN/LSTM model in diversity. If the diversity level is too high, the scripts tend go off to its own track, while even when the temperature is not too low, the scripts 
 
-**What's New**
-Built a model from scratch using bags of words rather than character based
-batch generator --> address the hardware limitation
-incorporated keras tokenizer
-Seinfeld script generator
 
 <a id='evaluation'></a>
 ### Evaluation
-- loss --> should shoot for under 1, however hard to get lower 
-- texts --> compare models
+For text generation models, loss seems to be so far the only quantitative metrics used to evaluate the model. However, for my project the character-level RNN-LSTM model has a lower loss than the word-level model, yet the word-level model performed significantly better. Therefore, the evaluation of model was done by me reading through every generated scripts. 
 
-RNN dependency too long --> forgets but input too long then too many noise
+Upon reading hundreds of scripts generated by my models, I believe word-base RNN-LSTM model and GPT-2 model showcase their own pros and cons and therefore will use these two models to make suggestions for the audience of this project.
 
-Final thought: Seinfeld is kind of a tough text to generate from. As a general rule, text generators work better the more abstract the language.  Well, not neccarily *better* just that abstract language makes the imperfect text generation less detectable. This is why stuff like Shakespeare and poetry are popular for AI generation (Also why jazz is popular for AI music generators). People have trouble detecting flaws in less everyday language.
+Among these two models, from the cost perspective, RNN model took 3.6 hours to train and 12 seconds to generate a 200-word script, while GPT-2 took 2 hours to train yet 40 seconds to generate the script of same length. The RNN model was fine tuned and trained on Google Cloud multiple times across the time span of 2 weeks which end up costing fewer than \\$150 while GPT-2 cost almost nothing. 
 
 <a id='script_generator_api'></a>
 ### Script Generator API
 
-streamlit
+An API for each model was developed using streamlit.io as an user-frinedly interface for non-technical users to try out the model. Below is a screenshot of the GPT-2 model app. 
 
 <table><tr>
 <td><img src='./img/api_gpt_screenshot.png' alt="Drawing" style="width: 500px;"/></td>         
 </tr></table>
 
-<a id='text_preprocessing'></a>
-### System Requirment
-- RNN under py 3.7
-- GPT-2 tensorflow 1.15
+Due to the large size of GPT-2 model and the special tensorflow version requirment, so far the project was not able to deploy the APIs online. However, they can be ran locally. Please refer to system requirment section for details.
 
-<a id='findings_and_recommendations'></a>
-### Findings and Conclusions
-- for text generation, data size is still the key?
+<a id='Conclusions'></a>
+### Conclusions
 
-Dataset sizes: Note that if your data is too small (1MB is already considered very small) the RNN won't learn very effectively. Remember that it has to learn everything completely from scratch. Conversely if your data is large (more than about 2MB), feel confident to increase rnn_size and train a bigger model (see details of training below). It will work significantly better. For example with 6MB you can easily go up to rnn_size 300 or even more. The biggest that fits on my GPU and that I've trained with this code is rnn_size 700 with num_layers 3 (2 is default).
-
-business writing, legal writing etc very useful, efficient
-
-
-
+Based on the models and results, following conclusions were drawn for the marketing professionals who are looking to utilize the models:
+1. For text generation models, data is the key. If the dataset is smaller than 1MB, the GPT-2 model should be used, as the RNN would not effectively learn. Between the size of 1-6MB, either RNN or GPT-2 would provide good results, other considerations should prevail in deciding which model to go with. If the dataset is greater than 6MB, which is considered very large for text data, RNN should perform well.
+2. The purpose of text generation is also critical when it comes to model choosing. RNN results are more loyal to the original vocabulary while GPT-2 often adds in external information that it learned from its existing paramters. If a marketing professional is looking to establish close bond with a fan community, perhaps RNN will fit better. For inspiration purposes, on the other hand, GPT-2 could provide many inspiration. Althought both models exceed the boundary every once in a generation. GPT-2 generates almost ready-to-go text that are close to perfect in terms of format and grammar however RNN works amazing generating abstract, comedic, and casual texts.
+3. From the time and cost perspective, both models have their pros and cons. If a marketing professional would like to generate chunks of texts, then RNN is the way to go due to its lightweight.
+4. As RNN is a model built from scratch, additional fine tuning is possible to perfect it, meanwhile GPT-2, due to its pre-trained nature, is not likely to be change significantly.
 
 <a id='limitations_and_next_steps'></a>
 ### Limitations and Next Steps
-limitations
-- Data not clean enough
-- Loss didn't change much -- indicate that the model might be too simple -- attention model? bidirectional? Simply more training time
+Limitations
 
-- GPT-2 --> too big to load, too slow to run, everytime needs to load the entire package.
+Data not clean enough, which added noise to the modeling
+RNN-LSTM model had a hard time reducing loss function
+Additional time/efforts on fine-tuning RNN model needed 
+Highly dependant on cloud computing
+Slow and subjective evaluation
+Internet-trained models have internet-scale biases.
+Unable to deploy API due to dependency version conflicts
 
-- Streamlit --> how to incorporate cache to improve the performance & user experience, --> version issue: how to incorporate both models together to compare
-
-- need more time to generate lots of texts and dive into reading to compare
-
-next steps
+Next Steps
 - Train on jokes to make it more funny although seinfeld's jokes are very sophisticated/ insightful.
 
 - Would be great to build in printouts during the modeling
@@ -214,51 +204,35 @@ next steps
 
 - Try using torch
 
-The code is written in Torch 7, which has recently become my favorite deep learning framework. I’ve only started working with Torch/LUA over the last few months and it hasn’t been easy (I spent a good amount of time digging through the raw Torch code on Github and asking questions on their gitter to get things done), but once you get a hang of things it offers a lot of flexibility and speed. I’ve also worked with Caffe and Theano in the past and I believe Torch, while not perfect, gets its levels of abstraction and philosophy right better than others. In my view the desirable features of an effective framework are:
-
-CPU/GPU transparent Tensor library with a lot of functionality (slicing, array/matrix operations, etc. )
-An entirely separate code base in a scripting language (ideally Python) that operates over Tensors and implements all Deep Learning stuff (forward/backward, computation graphs, etc)
-It should be possible to easily share pretrained models (Caffe does this well, others don’t), and crucially
-NO compilation step (or at least not as currently done in Theano). The trend in Deep Learning is towards larger, more complex networks that are are time-unrolled in complex graphs. It is critical that these do not compile for a long time or development time greatly suffers. Second, by compiling one gives up interpretability and the ability to log/debug effectively. If there is an option to compile the graph once it has been developed for efficiency in prod that’s fine.
-
-<a id='reflections'></a>
-### Reflections
-Deepfake: what is the boundary
-
-Very challenging to set the model right, vectors, dimensions, shape
-Output dim turns out matters? Input_dim matters too
-Deepfake: what is the boundary
-
-Not that writers can be replaced!!! but it's a latent area that can save us possible time: think about customer service: responding emails?
-Data quality is not great
-
-Transfer Learning --> if it's there, use it!
-
-We need standards for studying bias. Language models have biases. Working out how to study these biases, discuss them, and address them, is a challenge for the AI research community. We’ve approached the challenge of bias in two ways:
-
-<a id='technical_review'></a>
-### Technical Review
-
+Incorporate attention mechanism to RNN-LSTM models
+Train the existing model with jokes dataset
+Improve the API to be more user-friendly
+Build an automated way to evaluate the generated texts
 
 <a id='system_requirements'></a>
 ### System Requirements
+A virtual environment of Python 3.6 was suggestedto run the GPT-2 model and streamlit API as the GPT-2 requires a tensorflow with 1.1*.
+
+In your virtual environment where ```app.py``` is located, run the following code to initiate the API:
+
+`streamlit run app.py`
+`streamlit run rnn_app.py`
+
+Also note that recent updates of python may result in a failure to load ```.hdf5``` and ```.h5``` files.
 
 <a id='references'></a>
 ### References
 
-https://colah.github.io/posts/2015-08-Understanding-LSTMs/
-
-https://medium.com/@HeathEvans/content-is-king-essay-by-bill-gates-1996-df74552f80d9#:~:text=Ever%20wondered%20where%20the%20phrase,as%20it%20was%20in%20broadcasting.
-
-https://towardsdatascience.com/openai-gpt-2-understanding-language-generation-through-visualization-8252f683b2f8
-
-https://towardsdatascience.com/examining-the-transformer-architecture-part-1-the-openai-gpt-2-controversy-feceda4363bb
-
-https://nbviewer.jupyter.org/gist/yoavg/d76121dfde2618422139
-
-paper
-http://karpathy.github.io/2015/05/21/rnn-effectiveness/
-
-https://s3-us-west-2.amazonaws.com/openai-assets/research-covers/language-unsupervised/language_understanding_paper.pdf
-
-https://arxiv.org/pdf/1511.06303.pdf
+* [`Understanding LSTM Networks`] (GitHub): ([*source*](https://colah.github.io/posts/2015-08-Understanding-LSTMs/))
+* [`“Content is King” — Essay by Bill Gates 1996`] (Medium): ([*source*](https://medium.com/@HeathEvans/content-is-king-essay-by-bill-gates-1996-df74552f80d9#:~:text=Ever%20wondered%20where%20the%20phrase,as%20it%20was%20in%20broadcasting))
+* [`OpenAI GPT-2: Understanding Language Generation through Visualization`] (Towards Data Science): ([*source*](https://towardsdatascience.com/openai-gpt-2-understanding-language-generation-through-visualization-8252f683b2f8))
+* [`Examining the Transformer Architecture`] (Towards Data Science): ([*source*](https://towardsdatascience.com/examining-the-transformer-architecture-part-1-the-openai-gpt-2-controversy-feceda4363bb))
+* [`Examining the Transformer Architecture`] (Towards Data Science): ([*source*](https://towardsdatascience.com/examining-the-transformer-architecture-part-1-the-openai-gpt-2-controversy-feceda4363bb))
+* [`The unreasonable effectiveness of Character-level Language Models`] (Jupyter): ([*source*](https://nbviewer.jupyter.org/gist/yoavg/d76121dfde2618422139))
+* [`The unreasonable effectiveness of Character-level Language Models`] (Jupyter): ([*source*](https://nbviewer.jupyter.org/gist/yoavg/d76121dfde2618422139))
+* [`Generating TV Script using LSTM Network | Keras`] (Medium): ([*source*](https://medium.com/coloredfeather/generating-a-tv-script-using-recurrent-neural-networks-dd0a645e97e7))
+* [`The Illustrated Transformer`] (Github): ([*source*](http://jalammar.github.io/illustrated-transformer/))
+* [`How Biased is GPT-3?`] (Github): ([*source*](https://medium.com/fair-bytes/how-biased-is-gpt-3-5b2b91f1177))
+* [`Improving Language Understanding by Generative Pre-Training`] (Amazon AWS): ([*source*](https://s3-us-west-2.amazonaws.com/openai-assets/research-covers/language-unsupervised/language_understanding_paper.pdf))
+* [`Alternative Structures for Character-Level RNNs`] (arXiv): ([*source*](https://arxiv.org/pdf/1511.06303.pdf))
+* [`Attention Is All You Need`] (arXiv): ([*source*](https://arxiv.org/pdf/1706.03762.pdf))
