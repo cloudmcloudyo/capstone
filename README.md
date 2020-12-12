@@ -185,29 +185,11 @@ Based on the models and results, following conclusions were drawn for the market
 
 <a id='limitations_and_next_steps'></a>
 ### Limitations and Next Steps
-Limitations
 
-Data not clean enough, which added noise to the modeling
-RNN-LSTM model had a hard time reducing loss function
-Additional time/efforts on fine-tuning RNN model needed 
-Highly dependant on cloud computing
-Slow and subjective evaluation
-Internet-trained models have internet-scale biases.
-Unable to deploy API due to dependency version conflicts
+Limitations of this project include: 1. as the data was a lot messier than expected, it added noises to the modeling which can be seen from some of the generated results; 2. The word-based RNN-LSTM model had a hard time reducing its loss function; 3. Additional time/efforts on fine-tuning RNN model needed; 4. Both models are highly dependant on cloud computing which poses potential technical challengese; 5. No effective evaluation metrics have been utilized yet. So far the evaluation is all manual which slow and subjective; 6. GPT-2 as an
+nternet-trained models has acknowledgably internet-scale biases; 7. Unable to deploy API due to dependency version conflicts.
 
-Next Steps
-- Train on jokes to make it more funny although seinfeld's jokes are very sophisticated/ insightful.
-
-- Would be great to build in printouts during the modeling
-
-- Figure out an automated way to read through the generated texts. Would be great to automate the counting how many words 
-
-- Try using torch
-
-Incorporate attention mechanism to RNN-LSTM models
-Train the existing model with jokes dataset
-Improve the API to be more user-friendly
-Build an automated way to evaluate the generated texts
+For next steps, I would like to: 1. incorporate attention mechanism to RNN-LSTM model; 2. try training the existing data on some joke dataset to see if it could make the script funnier; 3. create a function to printouts the model's learning progress throughout the training; 4. build an automated way to evaluate the generated texts; 4. improve the API to be more user-friendly.
 
 <a id='system_requirements'></a>
 ### System Requirements
