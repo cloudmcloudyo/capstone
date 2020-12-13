@@ -62,7 +62,7 @@ The cleaned data before feature engineering has a shape of (44,661, 3) as compar
 
 I engineered a couple of features for EDA purposes including ```word_count```, ```sentiment_score```, ```sentiment```("positive", "negative" or "neutral"), and ```line_no_par```(lines excluding the script description inside parentheses).
 
-Overall the average word count per line is 13 words. The distribution of the word count per line is highly skewed to the right. The max number is 399, which was expected, as the show always start with Jerry Seinfeld doing a comedy stand up which has long lines.
+Overall the average word count per line is 13 words. The distribution of the word count per line is highly skewed to the right. The max number is 399, which was expected, as the show always start with Jerry Seinfeld doing a comedy stand-up which has long lines.
 
 <table><tr>
 <td> <img src="./charts/dist_word_counts.png" alt="Drawing" style="width: 375px;"/> </td>
@@ -77,7 +77,7 @@ Below are the charts of top 15 characters with most lines and most line words. N
 <td> <img src="./charts/top15_most_words.png" alt="Drawing" style="width: 500px;"/> </td>
 </tr></table>
 
-The result of sentiment analysis surprised me. Despite the display of huge differences in characters on the screen, the lines of the 4 characters showed almost identical mean and distribution of positive, neutral and negative sentiments. As indicated by the visualizations, all four of them have mostly neutral sentiment, followed by positive and then negative.
+The result of sentiment analysis surprised me. Despite the display of huge differences in characters on the screen, the lines of the 4 characters showed almost identical mean and distribution of positive, neutral and negative sentiments.  As indicated by the visualizations, all four of them have mostly neutral sentiment, followed by positive and then negative. However upon further thinking, the result might be due to the fact many _Seinfeld_ lines were sacarsm, which machine hasn't been trained well enough to tell.
 
 <table><tr>
 <td> <img src="./charts/top4_sentiment_percentage.png" alt="Drawing" style="width: 500px;"/> </td>
@@ -100,7 +100,16 @@ I created word clouds for each character for better visualizations. As shown bel
 <td> <img src="./charts/kramer_wordcloud.png" alt="Drawing" style="width: 375px;"/> </td>
 </tr></table>
 
-Also it was during this process that I realized there are still some formatting erros in the data that was not possible to efficiently clean out within the time limit. Considering the amount is not too huge, I decided to work with what I had.
+Below is a brief summary of most used words by four characters collectively and indiviually. The very left column shows the frequent words/phrases shared by all four characters. I labeled the wordes/phrases into four categories: interjection words, negated expression, character names, and meainful one(s). Upon examining, my takeaway is -- it is truly a show about nothing.
+
+|**Shared**|*Jerry*|*George*|*Elaine*|*Kramer*|
+|---|---|---|---|---|
+|**Interjectionr**:`yeah, hey, oh,  oh yeah, hey hey, oh hi, yeah yeah, yeah right, yada yada yada`|None|`ha ha`|`ha ha, uh uh`|`uh uh, ho ho`|
+|**Negation**:`don know, don want, don think`|`don understand, don care`|`don understand, don like`|`don understand`|`don like`|
+|**Character Names**:`Jerry, George, Elaine, Kreamer`|`Uncle Leo`|None|`Mr. Peterman, Mr. Pitt`|`Newman`|
+|**Meaningful**:`get out`|`coffee shop, wait second`|`coffee shop, wait minute`|`coffee shop, wait minute`|`coffee table`|
+
+Also it was during this process that I realized there are still some formatting errors in the data that was not possible to efficiently clean out within the time limit. Considering the amount is not too huge, I decided to work with what I had.
 
 Upon conducting EDA, I came up with some conslusions and hypotheses:
 
@@ -108,7 +117,7 @@ Upon conducting EDA, I came up with some conslusions and hypotheses:
 2. Jerry, George, Elaine and Kramer are definite leading charaters with most lines and line words and therefore I assume that most of the model outputs will consist of dialogues among them.
 3. As the average line length is 13 words, I may not want my model to learn the scripts with a number smaller than that, otherwise not enough information will be fed into the model to effectively learn. In the similar sense, considering the nature of conversations, I may not want my model to have too many lines to look at either, as that way will create noises.
 4. Although I perceived distinctive personalities for the 4 leading characters from the show, I didn't see enough distinction from their lines. They have similar sentiment results and simlar word usages. If anything, Kramer may be the only one who shows slight difference from his three friends.
-5. I would expect to see a lot of repetition of "meaningless" high frequency words such as "yeah yeah", "oh yeah", "don know", "don think", "don want" in the generated scripts.
+5. I would expect to see many repetitions of "meaningless" high frequency words such as "yeah yeah", "oh yeah", "don know", "don think", "don want" in the generated scripts.
 
 <a id='modeling_and_tuning'></a>
 ### Modeling and Tuning
@@ -186,14 +195,14 @@ Based on the models and results, following conclusions were drawn for the market
 <a id='limitations_and_next_steps'></a>
 ### Limitations and Next Steps
 
-Limitations of this project include: 1. as the data was a lot messier than expected, it added noises to the modeling which can be seen from some of the generated results; 2. The word-based RNN-LSTM model had a hard time reducing its loss function; 3. Additional time/efforts on fine-tuning RNN model needed; 4. Both models are highly dependant on cloud computing which poses potential technical challengese; 5. No effective evaluation metrics have been utilized yet. So far the evaluation is all manual which slow and subjective; 6. GPT-2 as an
-nternet-trained models has acknowledgably internet-scale biases; 7. Unable to deploy API due to dependency version conflicts.
+Limitations of this project include: 1. as the data was a lot messier than expected, it added noises to the modeling which can be noticed from some of the generated results; 2. The word-based RNN-LSTM model had a hard time reducing its loss function; 3. Additional time/efforts on fine-tuning RNN model needed; 4. Both models are highly dependant on cloud computing which poses potential technical challengese; 5. No effective evaluation metrics have been utilized yet. So far the evaluation is all manual which slow and objective; 6. GPT-2 as an
+internet-trained models has acknowledgably internet-scale biases; 7. Unable to deploy API due to dependency version conflicts.
 
 For next steps, I would like to: 1. incorporate attention mechanism to RNN-LSTM model; 2. try training the existing data on some joke dataset to see if it could make the script funnier; 3. create a function to printouts the model's learning progress throughout the training; 4. build an automated way to evaluate the generated texts; 4. improve the API to be more user-friendly.
 
 <a id='system_requirements'></a>
 ### System Requirements
-A virtual environment of Python 3.6 was suggestedto run the GPT-2 model and streamlit API as the GPT-2 requires a tensorflow with 1.1*.
+A virtual environment of Python 3.6 was suggested to run the GPT-2 model and streamlit API as the GPT-2 requires a tensorflow with 1.1*.
 
 In your virtual environment where ```app.py``` is located, run the following code to initiate the API:
 
